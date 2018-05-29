@@ -84,13 +84,20 @@ class ColdStart2AidaInterchangeConverter(
                             entityIriGenerator.nextIri(), systemNode)
                     is EventNode -> AIFUtils.makeEvent(model,
                             eventIriGenerator.nextIri(), systemNode)
-                    is StringNode -> model.createResource(stringIriGenerator.nextIri())
+                    is StringNode -> makeString(model, systemNode)
                     else -> throw RuntimeException("Cannot make a URI for " + node.toString())
                 }
 
                 objectToUri.put(node, rdfNode)
             }
             return objectToUri.getValue(node)
+        }
+
+        private fun makeString(model: Model, systemNode: Resource): Resource {
+            val string = model.createResource(stringIriGenerator.nextIri())
+            string.addProperty(RDF.type, ColdStartOntology.STRING)
+            string.addProperty(AidaAnnotationOntology.SYSTEM_PROPERTY, systemNode)
+            return string
         }
 
         // converts a ColdStart ontology type to a corresponding RDF identifier
@@ -215,10 +222,13 @@ class ColdStart2AidaInterchangeConverter(
         }
 
         fun translateRelation(csAssertion: RelationAssertion, confidence: Double): Boolean {
-            AIFUtils.makeRelation(model, assertionIriGenerator.nextIri(),
+            val relation = AIFUtils.makeRelation(model, assertionIriGenerator.nextIri(),
                     toResource(csAssertion.subject),
                     ColdStartOntology.relationType(csAssertion.relationType),
                     toResource(csAssertion.obj), systemNode, confidence)
+
+            registerJustifications(relation, csAssertion.justifications, null, confidence)
+
             return true
         }
 
