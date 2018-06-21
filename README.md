@@ -1,3 +1,7 @@
+DO NOT USE THIS REPOSITORY
+
+Use https://github.com/NextCenturyCorporation/AIDA-Interchange-Format . You will need to contact clark.dorman@nextcentury.com with your GitHub user ID to get access.
+
 # gaia-interchange
 
 This repository contains resources to support the AIDA Interchange Format (AIF).  It consists of:
